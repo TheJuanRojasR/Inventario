@@ -20,7 +20,7 @@ const categoryShema = new mongoose.Shema({
         require: [true, "La descripcion es requerida."],
         trim: true,
     },
-    //  
+    //  Se puede desactivar pero no borrar
     active: {
         type: Boolean,
         defalut: true,
