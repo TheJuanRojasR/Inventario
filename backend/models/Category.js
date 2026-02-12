@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 
 // Campos de la tabla de categoria
 
-const categoryShema = new mongoose.Shema({
+const categorySchema = new mongoose.Schema({
     // Nombre categoria
     name: {
         type: String,
@@ -38,7 +38,7 @@ const categoryShema = new mongoose.Shema({
 // 2.1 Si exite lo elimina antes de nuevas operaciones.
 // 2.2 Si no ignora errores si el indice no existe.
 
-categoryShema.pre("save", async function (next) {
+categorySchema.pre("save", async function (next) {
     try {
         // Obtener referencia de la coleccion de mongoDB
         // this : variable transitoria BUSCAR
@@ -68,9 +68,9 @@ categoryShema.pre("save", async function (next) {
 // Crear indice unico
 // Mondo rechazara cualquier intento de insertar o actualizar un documento con un valor name que ya exista.
 
-categoryShema.index({ name: 1}), {
+categorySchema.index({ name: 1}), {
     unique: true,
     name: "name_1", // Nombre explicito para evitar conflictos
 }
 
-module.exports = mongoose.model("Category", categoryShema);
+module.exports = mongoose.model("Category", categorySchema);

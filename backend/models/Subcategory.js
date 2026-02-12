@@ -1,7 +1,5 @@
 "use strict";
 
-"use strict";
-
 // Modelo de subcategoria de MongoDB
 // Subcategoria depende de categoria
 
