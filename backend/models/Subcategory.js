@@ -1,36 +1,29 @@
 "use strict";
 
-// Modelo de subcategoria de MongoDB
-// Subcategoria depende de categoria
-
 const mongoose = require("mongoose");
 
-// Campos de la tabla de categoria
-
-const subcategoryShema = new mongoose.Shema({
-    // Nombre categoria
+const subcategorySchema = new mongoose.Schema({
     name: {
         type: String,
-        require: [true, "El nombre es requerido."],
+        required: [true, "El nombre es requerido."],
         unique: true,
         trim: true,
     },
-    // Descripcion de la categoria
     description: {
         type: String,
-        require: [true, "La descripcion es requerida."],
+        required: [true, "La descripción es requerida."],
         trim: true,
     },
-    // Categoria padre 
+    // Apunta hacia la coleccion Category
     category: {
-        type: mongoose.Shema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Category",
-        required: [true, "La categoria es requerida"],
+        required: [true, "La categoría es requerida"],
+        index: true, // Tip de Arquitecto: Indexar llaves foráneas para rapidez
     },
-    // Se puede desactivar pero no borrar  
     active: {
         type: Boolean,
-        defalut: true,
+        default: true,
     },
 },
 {
@@ -38,20 +31,14 @@ const subcategoryShema = new mongoose.Shema({
     versionKey: false,
 });
 
-// Middleware pre save
-// Limpia indices duplicados porque en ocaciones Mongo los crea.
-// 1. Optiene una lista de todos los indices de la coleccion.
-// 2. Busca si existe indice con nombre name_1 (antiguo o duplicado)
-// 2.1 Si exite lo elimina antes de nuevas operaciones.
-// 2.2 Si no ignora errores si el indice no existe.
-
-subcategoryShema.post("save", function (error, doc, next) {
-    // Verifica si es error de mongoDb por violacion de indice unico
-    if (error.name === "MongoServerError" && error.code === 1000) {
-        next(new Error("Ya existe una subcategoria con ese nombre."));
+// Middleware post-save para manejo de errores de índice
+subcategorySchema.post("save", function (error, doc, next) {
+    // Código de error de duplicados : 11000
+    if (error.name === "MongoServerError" && error.code === 11000) {
+        next(new Error("Ya existe una subcategoría con ese nombre."));
     } else {
         next(error);
     }
 });
 
-module.exports = mongoose.model("Subcategory", subcategoryShema);
+module.exports = mongoose.model("Subcategory", subcategorySchema);
