@@ -2,6 +2,7 @@
 
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const { saltRounds } = require("../config/auth.config");
 
 const userSchema = new mongoose.Schema(
     {
@@ -47,7 +48,7 @@ userSchema.pre("save", async function (next) {
     if (!this.isModified("password")) return next();
 
     try {
-        const salt = await bcrypt.genSalt(10);
+        const salt = await bcrypt.genSalt(saltRounds);
         // Hasheamos la contraseña antes de guardar para seguridad
         this.password = await bcrypt.hash(this.password, salt);
         next();
