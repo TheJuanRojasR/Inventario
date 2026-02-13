@@ -1,10 +1,10 @@
 "use strict";
 
 // Barrel
-const User = require("./User.js");
-const Product = require("./Product.js");
-const Category = require("./Category.js");
-const Subcategory = require("./Subcategory.js");
+const User = require("./user.model");
+const Product = require("./product.model.js");
+const Category = require("./category.model.js");
+const Subcategory = require("./subcategory.model");
 
 module.exports = {
     User,
