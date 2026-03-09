@@ -10,5 +10,5 @@ module.exports = {
     User,
     Product,
     Category,
-    Subcategory
+    Subcategory,
 }
