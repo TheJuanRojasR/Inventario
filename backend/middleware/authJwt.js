@@ -75,7 +75,7 @@ const verifyTokenFn = (req, res, next) => {
         const decoded = jwt.verify(token, config.secret);
 
         req.userId = decoded.id;
-        req.userRol = decoded.role;
+        req.userRole = decoded.role;
         req.userEmail = decoded.email;
 
         // Token en valido continuar con el siguiente middleware ruta
@@ -103,5 +103,8 @@ if (typeof verifyTokenFn !== "function") {
 }
 
 // exportar el middleware
-module.exports = { verifyTokenFn };
+module.exports = {
+    verifyToken: verifyTokenFn,
+    verifyTokenFn,
+};
 

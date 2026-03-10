@@ -19,8 +19,10 @@ const config = require("./config");
  * Verifica que las variables de entorno requeridas esten definidas
  */
 
-if (!process.env.MONGO_URI) {
-    console.log("Error: MONGO_URI no esta definida en env");
+const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI;
+
+if (!mongoUri) {
+    console.log("Error: MONGODB_URI o MONGO_URI no esta definida en env");
     process.exit(1);
 }
 
@@ -37,8 +39,8 @@ const app = express();
 
 // Cors permite las solicitudes desde el frontend
 app.use(cors({
-    origin : "http://localhost:3000",
-    credentiales: true,
+    origin: "http://localhost:3000",
+    credentials: true,
 }));
 
 // Morgan registra todas las solicitudes HTTP en consola
@@ -51,7 +53,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Conexion a mongoDB
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(mongoUri)
     .then(() => console.log("MongoDB conectado correctamente"))
     .catch(err => {
         console.error("Error de conexion a mongoDB:", err.message);
@@ -70,7 +72,7 @@ mongoose.connect(process.env.MONGODB_URI)
     app.use("/api/products", productRoutes);
 
     // Ruta de categorias
-    app.use("/api/products", categoryRoutes);
+    app.use("/api/categories", categoryRoutes);
 
     // Rutas de subcategorias
     app.use("/api/subcategories", subCategoryRoutes);

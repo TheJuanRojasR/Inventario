@@ -34,23 +34,28 @@
 
 const checkRole = (...allowedRoles) => {
     return (req, res, next) => {
-        // Validar que el usuario fue autenticado y veryfyToken ejecutado
-        // req.userRole es establecido por veryfyTiken middleware
+        // Validar que el usuario fue autenticado y verifyToken ejecutado
+        // req.userRole es establecido por verifyToken middleware
         if (!req.userRole) {
             return res.status(401).json({
                 success: false,
                 message: "Token invalido o expirado",
             });
         }
-        
+
+        // Soporta que allowedRoles sea un array de arrays (por ejemplo checkRole(["admin", "coordinador"]))
+        const allowed = allowedRoles.flat ? allowedRoles.flat() : allowedRoles;
+
         // Verifica si el rol del usuario esta en la lista de roles permitidos
-        if (!allowedRoles.includes(req.userRole)) {
+        if (!allowed.includes(req.userRole)) {
             return res.status(403).json({
                 success: false,
-                message: `Permisos insuficientes. Se requiere ${allowedRoles.join(" o ")}`,
+                message: `Permisos insuficientes. Se requiere ${allowed.join(" o ")}`,
             });
         }
+
         // Usuario tiene permiso continuar
+        next();
     }
 };
 
@@ -70,7 +75,7 @@ const isAuxiliar = (req, res, next) => {
 }
 
 // Modulos a exportar
-module.exporst = {
+module.exports = {
     checkRole,
     isAdmin,
     isCoordinador,

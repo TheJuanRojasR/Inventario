@@ -17,6 +17,7 @@ const router = express.Router();
 
 const categoryController = require("../controllers/category.controller.js");
 const { verifyToken } = require("../middleware/authJwt.js");
+const { checkRole } = require("../middleware/role.js");
 
 // RUTAS CRUD
 

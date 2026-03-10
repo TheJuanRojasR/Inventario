@@ -25,15 +25,15 @@ const { checkRole } = require("../middleware/role.js");
 const validateSubcategory = [
     check("name")
         .not().isEmpty()
-        .withmessage("El nombre es obligatorio"),
+        .withMessage("El nombre es obligatorio"),
 
     check("description")
         .not().isEmpty()
-        .withmessage("La descripcion es obligatoria"),
+        .withMessage("La descripcion es obligatoria"),
 
     check("category")
         .not().isEmpty()
-        .withmessage("La categoria es obligatoria"),
+        .withMessage("La categoria es obligatoria"),
 ];
     
 

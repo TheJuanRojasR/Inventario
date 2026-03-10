@@ -8,8 +8,8 @@
  * Cuando se ejecuta en cascada soft delete se eliminan de manera permanente
  */
 
-const SubCategory = require("../models/subcategory.model.js")
-const Category = require("../models/category.model,js");
+const SubCategory = require("../models/subcategory.model.js");
+const Category = require("../models/category.model.js");
 
 /**
  * crate: crear una subcategoria
@@ -225,7 +225,7 @@ exports.deleteSubcategory = async (req, res) => {
         const Product = require("../models/product.model.js");
         const isHardDelete = req.query.hardDelete === "true";
 
-        const subcategory = await Category.findById(req.params.id);
+        const subcategory = await SubCategory.findById(req.params.id);
 
         if (!subcategory) {
             return res.status(404).json({
@@ -247,7 +247,7 @@ exports.deleteSubcategory = async (req, res) => {
                 success: true,
                 message: "Subcategoria eliminada permanente y productos relacionados",
                 data: {
-                    category: subcategory,
+                    subcategory: subcategory,
                 }
             });
         } else {
@@ -256,7 +256,7 @@ exports.deleteSubcategory = async (req, res) => {
 
             // Desactiva todos los productos relacionadaos
             const products = await Product.updateMany(
-                { category: req.params.id },
+                { subcategory: req.params.id },
                 { active: false }
             );
 

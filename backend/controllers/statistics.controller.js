@@ -48,6 +48,6 @@ const getStatistics = async (req, res) => {
     }
 };
 
-modules.exports = {
+module.exports = {
     getStatistics,
 };

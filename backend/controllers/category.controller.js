@@ -23,14 +23,14 @@ exports.createCategory = async (req, res) => {
         if (!name || typeof name !== "string" || !name.trim()) {
             return res.status(400).json({
                 success: false,
-                massage: "El nombre es obligatorio",
+                message: "El nombre es obligatorio",
             });
         }
 
         if (!description || typeof description !== "string" || !description.trim()) {
             return res.status(400).json({
                 success: false,
-                massage: "La descripcion es obligatorio",
+                message: "La descripcion es obligatorio",
             });
         }
 
@@ -94,7 +94,7 @@ exports.getCategories = async (req, res) => {
     
         const activeFilter = includeInactive ? {} : { active: { $ne: false } };
     
-        const categories = await Category.find(activeFilter).sort({ createAt: -1 });
+        const categories = await Category.find(activeFilter).sort({ createdAt: -1 });
     
         res.status(200).json({
             success: true,
@@ -116,7 +116,7 @@ exports.getCategoryById = async (req, res) => {
     try {
         const category = await Category.findById(req.params.id);
 
-        if (!categories) {
+        if (!category) {
             return res.status(404).json({
                 success: false,
                 message: "Categoria no encontrada",
@@ -240,11 +240,11 @@ exports.deleteCategory = async (req, res) => {
         }
 
         if (isHardDelete) {
-            const subIds = await SubCategory.find({ category: req.params.id }).map(s => s._id);
+            const subIds = await Subcategory.find({ category: req.params.id }).map(s => s._id);
 
             await Product.deleteMany({ category: req.params.id });
 
-            await Product.deleteMany({ subCategory: { $in: subIds }});
+            await Product.deleteMany({ subcategory: { $in: subIds }});
 
             await Subcategory.deleteMany({ category: req.params.id });
 
@@ -278,7 +278,7 @@ exports.deleteCategory = async (req, res) => {
                 message: "Categoria desactivada exitosamente y sus subcategorias y productos asociados",
                 data: {
                     category: category,
-                    subcategoriesDeactivated: subcategories.modifiedCound,
+                    subcategoriesDeactivated: subcategories.modifiedCount,
                     productsDeactivated: products.modifiedCount,
                 }
             });

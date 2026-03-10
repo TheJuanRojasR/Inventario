@@ -21,7 +21,7 @@
  * 400 Username / email duplicado o rol invalido
  * 500 error de base de datos
  */
-const User = require('../models/User');
+const { User } = require('../models/index.js');
 
 /**
  * Verifica que username y email sean unicos
@@ -57,7 +57,7 @@ const checkDuplicateUsernameOrEmail = async (req, res, next) => {
             ]
         }) .exec();
         // Si encuentra un usuario retornar error
-        if (!user) {
+        if (user) {
             return res.status(400).json({
                 success: false,
                 message: 'Username o email ya existen'

@@ -5,7 +5,7 @@
 
 // Crear Producto : Ver los campos necesarios en el modelo. (Tener cuidado con las relaciones categoria y subcategoria)
 
-const { Category, SubCategory, Product } = require("../models/index.js");
+const { Category, Subcategory, Product } = require("../models/index.js");
 
 /**
  * @description Crea un nuevo producto en la base de datos.
@@ -39,7 +39,7 @@ exports.createProduct = async (req, res) => {
         const [ existingCategory, existingSubcategory ] = await Promise.all([
             Category.findById(categoryId),
             // Verifica que si sea una subcategoria y que pertenezca a la categoria padre
-            SubCategory.findOne({ _id: subcategoryId, category: categoryId }), 
+            Subcategory.findOne({ _id: subcategoryId, category: categoryId }), 
         ]);
         
         if (!existingCategory) {
@@ -141,7 +141,7 @@ exports.createProduct = async (req, res) => {
 exports.getProducts = async (req, res) => {
     try {
         // Determinar si incluir productos inactivos
-        const { includeInactive } = req.query.includeInactive === "true";
+        const includeInactive = req.query.includeInactive === "true";
         const activeFilter = includeInactive ? {} : { active: { $ne: false } };
 
 
@@ -197,9 +197,7 @@ exports.getProductById = async (req, res) => {
         // Ocultar createdBy para usuarios auxiliares
         if (req.user && req.user.role === "auxiliar") {
             // Ocultar campo createdBy para usuarios auxiliares
-            products.forEach(product => {
-                product.createdBy = undefined;
-            });
+            product.createdBy = undefined;
         }
 
         res.status(200).json({
@@ -213,7 +211,7 @@ exports.getProductById = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Error al obtener producto",
-            error: error. message,
+            error: error.message,
         })
     }
 };
@@ -253,7 +251,7 @@ exports.updateProduct = async (req, res) => {
                 }
 
                 if (subcategory) {
-                    const subcategoryExist = await SubCategory.findOne({
+                    const subcategoryExist = await Subcategory.findOne({
                         _id: subcategory,
                         category: category || updateData.category,
                     });
@@ -274,7 +272,7 @@ exports.updateProduct = async (req, res) => {
             runValidators: true,
         }).populate("category", "name")
             .populate("subcategory", "name")
-            .populate("createBy", "username email");
+            .populate("createdBy", "username email");
 
         if (!updateProduct) {
             return res.status(404).json({

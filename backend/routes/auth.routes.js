@@ -11,9 +11,9 @@
 const express = require("express");
 const router = express.Router();
 
-const authController =require("../controllers/auth.controller.js");
-const { verifySingnUp } = require("../middleware/verifySingUp.js");
-const { verifyToken } = require("../middleware/authJwt.js")
+const authController = require("../controllers/auth.controller.js");
+const verifySignUp = require("../middleware/verifySingUp.js");
+const { verifyToken } = require("../middleware/authJwt.js");
 const { checkRole } = require("../middleware/role.js");
 
 // RUTAS AUTENTICACION
@@ -24,8 +24,8 @@ router.post("/signin", authController.signin);
 router.post("/signup",
     verifyToken,
     checkRole("admin"),
-    verifySingnUp.checkDuplicateUsernameOrEmail,
-    verifySingnUp.checkRolesExisted,
+    verifySignUp.checkDuplicateUsernameOrEmail,
+    verifySignUp.checkRolesExisted,
     authController.signup,
 );
 

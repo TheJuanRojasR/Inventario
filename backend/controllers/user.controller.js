@@ -44,7 +44,7 @@ exports.getAllUsers = async (req, res) => {
         // control de acceso basado en rol
         if (req.userRole === "auxiliar") {
             // Los auxiliares solo pueden verse a si mismo
-            users = await User.find({ id: req.userId, ...activeFilter }).select("-password");
+            users = await User.find({ _id: req.userId, ...activeFilter }).select("-password");
         } else {
             // Los admin y coordinadores ven todos los usuarios
             users = await User.find(activeFilter).select("-password");
@@ -95,7 +95,7 @@ exports.getUserById = async (req, res) => {
         }
 
         // Los coordinadores no pueden ver administradores
-        if (req.userRole === "coordinador" && role === "admin") {
+        if (req.userRole === "coordinador" && user.role === "admin") {
             return res.status(403).json({
                 success: false,
                 message: "No puede ver administradores",
@@ -278,7 +278,7 @@ exports.deleteUser = async (req, res) => {
             await userToDelete.save();
 
             res.status(200).json({
-                success: false,
+                success: true,
                 message: "usuario desactivado exitosamente (soft delete).",
                 data: userToDelete,
             });

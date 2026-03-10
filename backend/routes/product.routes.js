@@ -25,27 +25,27 @@ const { checkRole } = require("../middleware/role.js");
 const validateProduct = [
     check("name")
         .not().isEmpty()
-        .withmessage("El nombre es obligatorio"),
+        .withMessage("El nombre es obligatorio"),
 
     check("description")
         .not().isEmpty()
-        .withmessage("La descripcion es obligatoria"),
+        .withMessage("La descripcion es obligatoria"),
 
     check("price")
         .not().isEmpty()
-        .withmessage("El precio es obligatoriao"),
+        .withMessage("El precio es obligatorio"),
 
     check("stock")
         .not().isEmpty()
-        .withmessage("El Stock es obligatorio"),
+        .withMessage("El Stock es obligatorio"),
 
     check("category")
         .not().isEmpty()
-        .withmessage("La cateogia es obligatoria"),
+        .withMessage("La categoria es obligatoria"),
     
     check("subcategory")
         .not().isEmpty()
-        .withmessage("La subcategoria es obligatoria"),
+        .withMessage("La subcategoria es obligatoria"),
 ];
 
 router.post("/",
