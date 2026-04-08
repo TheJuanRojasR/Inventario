@@ -1,18 +1,19 @@
 // Script para poblar categorías, subcategorías y productos con relaciones
-// Ejecutar con: node seedData.js (desde la carpeta backend)
+// Ejecutar con: node backend/seedData.js (desde la raíz del proyecto)
 
 // mongoose → librería ODM para conectar Node.js con MongoDB
 const mongoose = require('mongoose');
+const path = require('path');
 
 // dbConfig → contiene la URL de conexión a MongoDB
 // Archivo: backend/config/db.js
-const dbConfig = require('./config/db');
+const dbConfig = require(path.join(__dirname, 'config', 'db'));
 
 // Modelos → cada uno representa una colección en MongoDB
-// Archivos: backend/models/Category.js, Subcategory.js, Product.js
-const Category = require('./models/Category');
-const Subcategory = require('./models/Subcategory');
-const Product = require('./models/Product');
+// Archivos: backend/models/category.model.js, subcategory.model.js, product.model.js
+const Category = require(path.join(__dirname, 'models', 'category.model'));
+const Subcategory = require(path.join(__dirname, 'models', 'subcategory.model'));
+const Product = require(path.join(__dirname, 'models', 'product.model'));
 
 async function seedData() { // Función async que inserta datos de ejemplo en la BD
   await mongoose.connect(dbConfig.url, { useNewUrlParser: true, useUnifiedTopology: true }); // Conecta a MongoDB usando la URL de dbConfig

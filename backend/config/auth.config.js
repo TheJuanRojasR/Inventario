@@ -34,5 +34,5 @@ module.exports = {
      * Un valor más alto aumenta la seguridad pero también el tiempo de procesamiento.
      * Se recomienda un mínimo de 10 para entornos de producción.
      */
-    saltRounds: process.env.SALT_ROUNDS || 10
+    saltRounds: process.env.SALT_ROUNDS || 8
 }

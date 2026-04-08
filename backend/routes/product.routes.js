@@ -50,7 +50,7 @@ const validateProduct = [
 
 router.post("/",
     verifyToken,
-    checkRole(["admin", "coordinador"]),
+    checkRole(["admin", "coord"]),
     validateProduct,
     productController.createProduct,
 );
@@ -61,7 +61,7 @@ router.get("/:id", productController.getProductById);
 
 router.put("/:id",
     verifyToken,
-    checkRole(["admin", "coordinador"]),
+    checkRole(["admin", "coord"]),
     validateProduct,
     productController.updateProduct,
 );

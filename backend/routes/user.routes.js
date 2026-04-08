@@ -33,17 +33,21 @@ router.use((req, res, next) => {
 
 router.post("/",
     verifyToken,
-    checkRole(["admin", "coordinador"]),
+    checkRole(["admin", "coord"]),
     userController.createUser,
 );
 
-router.get("/", userController.getAllUsers);
+router.get("/",
+    verifyToken,
+    userController.getAllUsers);
 
-router.get("/:id", userController.getUserById);
+router.get("/:id", 
+    verifyToken,
+    userController.getUserById);
 
 router.put("/:id",
     verifyToken,
-    checkRole(["admin", "coordinador", "auxiliar"]),
+    checkRole(["admin", "coord", "aux"]),
     userController.updateUser,
 );
 

@@ -4,7 +4,7 @@
  * Middleware de validacion de signup
  * 
  * middleware para validar datos durante el proceso de registro de nuevos usuarios
- * se ejecuta en la ruta post /api/auth/singup Despues de verificar el token
+ * se ejecuta en la ruta post /api/auth/signup Despues de verificar el token
  * Validaciones:
  * 1. checkDuplicateUsernameOrEmail: verifica inicidad del username y email
  * 2. checkRolesExisted: valida que el rol solicitado sea valido
@@ -21,7 +21,7 @@
  * 400 Username / email duplicado o rol invalido
  * 500 error de base de datos
  */
-const { User } = require('../models/index.js');
+const { User } = require('../models');
 
 /**
  * Verifica que username y email sean unicos
@@ -66,12 +66,12 @@ const checkDuplicateUsernameOrEmail = async (req, res, next) => {
         // No hay duplicados continuar 
         next();
     } catch (err) {
-        console.error("[verifiSignUp] Error en checkDuplicateUsernameOrEmail:", err);
+        console.error("[verifySignUp] Error en checkDuplicateUsernameOrEmail:", err);
         return res.status(500).json({
         success: false,
         message: "Error al verificar credenciales",
         error: err.message
-      });
+        });
     }
 };
 /**
@@ -94,7 +94,7 @@ const checkDuplicateUsernameOrEmail = async (req, res, next) => {
  */
 const checkRolesExisted = (req, res, next) => {
     // Lista blanca de roles validos en el sistema
-    const validRoles = ['admin', 'coordinador', 'auxiliar'];
+    const validRoles = ['admin', 'coord', 'aux'];
 
     // Si roles está presente en el request
     if (req.body.role) {

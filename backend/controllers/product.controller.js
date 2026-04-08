@@ -27,102 +27,94 @@ const { Category, Subcategory, Product } = require("../models/index.js");
  */
 
 exports.createProduct = async (req, res) => {
-    try {
-        // 1. Desestructurando
-        const { name, description, price, stock, categoryId, subcategoryId, images, active  } = req.body;
+    try{
+        const {name, description, price, stock, category, subcategory} = req.body;
+    
+        // se valida que todos los campos requeridos esten presentes
 
-        // 2. Obtener el id del usuario desde el token
-        const userId = req.user?.id;
-        const userRole = req.user?.role;
-
-        // 3. Valida la existencia de los IDs. Ejecutar las 2 funciones asincronas para ahorrar tiempo
-        const [ existingCategory, existingSubcategory ] = await Promise.all([
-            Category.findById(categoryId),
-            // Verifica que si sea una subcategoria y que pertenezca a la categoria padre
-            Subcategory.findOne({ _id: subcategoryId, category: categoryId }), 
-        ]);
-        
-        if (!existingCategory) {
+        if(!name || !description || !price || !stock || !category || !subcategory){
             return res.status(400).json({
                 success: false,
-                message: "No existe la categoria enviada. Intente de nuevo",
+                message: 'Faltan campos requeridos',
+                requiredFields: ['name', 'description', 'price', 'stock', 'category', 'subcategory']
             });
-        }
+        };
 
-        if (!existingSubcategory) {
-            return res.status(400).json({
+        //Validar categoria padre existente
+        const parentCategory = await Category.findById(category);
+        if(!parentCategory){
+            return res.status(404).json({
                 success: false,
-                message: "No existe la subcategoria enviada. Intente de nuevo",
+                message: 'Categoria padre no existe',
+                categoryId: category
             });
-        }
+        };
 
-        // NOTA : Se deberia crear un middleware de autorizacion en routes
-        if (!userRole || userRole === "auxiliar") {
-            return res.status(403).json({
-            success: false,
-            message: "No tiene permiso para crear un producto"
-    });
-        }
+        //Validar subcategoria padre existente
+        const parentSubcategory = await Subcategory.findOne({
+            _id: subcategory,
+            category: category
+        });
+        if(!parentSubcategory){
+            return res.status(404).json({
+                success: false,
+                message: 'Subcategoria padre no existe o no pertenece a la categoria especificada',
+            })
+        };
 
-        // 4. Creando un producto
+        //Verificacion de que la subcategoria pertenece a la categoria
+        // if(parentSubcategory.category.toString() !== category){
+        //     return res.status(400).json({
+        //         success: false,
+        //         message: "La subacategoria no pertence a la categoria"
+        //     });
+        // };
+
+        //Nuevo producto
         const newProduct = new Product({
-            name: name?.trim(),
-            description: description?.trim(),
-            price,
-            stock,
-            category: existingCategory._id,
-            subcategory: existingSubcategory._id,
-            createdBy: userId,
-            images,
-            // Si active es null o undefined, usa true por defecto
-            active: active ?? true, 
+            name: name.trim(),
+            description: description.trim(),
+            price: price,
+            stock: stock,
+            category: category,
+            subcategory: subcategory
         });
 
-        // 5. Guardando producto
-        await newProduct.save();
-
-        // 6. Creando DTO de respuesta
-        const productResponse = {
-            // Pasa de tipo ObjectId -> String
-            id: newProduct._id.toString(),
-            name: newProduct.name,
-            price: newProduct.price,
-            stock: newProduct.stock,
-            categoryId: newProduct.category,
-            subcategoryId: newProduct.subcategory,
-            active: newProduct.active,
-            createdAt: newProduct.createdAt,
+        //Registrar el usuario que crea el producto
+        if (req.user && req.user._id){
+            product.createdBy = req.user._id;
         }
 
-        // 7. Responde con el DTO del producto creado
+        //Constante con el producto creado
+        const savedProduct = await newProduct.save();
+
+        //Consultar el producto poblado con los datos de relaciones
+        const productWithDetails = await Product.findById(savedProduct._id)
+            .populate('category', 'name')
+            .populate('subcategory', 'name')
+            .populate('createdBy', 'username email');
+
         res.status(201).json({
             success: true,
-            message: "Producto creado exitosamente.",
-            data: productResponse,
+            message: 'Producto creado correctamente',
+            data: productWithDetails
         });
 
-    } catch (error) {
-        // Error si esta duplicado el producto
-        if (error.code === 11000) {
+    } catch (error){
+        console.error('Error en createProduct:', error)
+        //manejo de error por indice unico
+        if(error.code === 11000){
             return res.status(400).json({
                 success: false,
-                message: "El nombre del producto ya existe."
+                message: 'El nombre del producto ya existe'
             });
         }
 
-        // Error de formato de ID (CastError)
-        if (error.name === "CastError") {
-            return res.status(400).json({
-                success: false,
-                message: "El formato del ID enviado no es válido."
-            });
-        }
-        
-        // Error general
-        console.error("Error en createProduct", error);
-        return res.status(500).json({
+        //Error de servidor
+        res.status(500).json({
             success: false,
-            message: "Error interno del servidor"
+            message: 'Error al crear el producto',
+            error: error.message
         });
     }
 };

@@ -1,20 +1,20 @@
 // Script para insertar usuarios de ejemplo en la base de datos MongoDB
-// Ejecutar con: node seedUsers.js (desde la carpeta backend)
+// Ejecutar con: node backend/seedUsers.js (desde la raíz del proyecto)
 
 // mongoose → librería ODM para conectar Node.js con MongoDB
 const mongoose = require('mongoose');
+const path = require('path');
 
 // bcrypt → librería para encriptar contraseñas; no se usa directamente aquí porque
 // el modelo User tiene un pre-save hook que encripta automáticamente
-const bcrypt = require('bcrypt');
 
 // Modelo User → se usa para verificar existencia y crear nuevos usuarios
-// Archivo: backend/models/User.js
-const User = require('./models/User');
+// Archivo: backend/models/user.model.js
+const User = require(path.join(__dirname, 'models', 'user.model'));
 
 // dbConfig → contiene la URL de conexión a MongoDB
 // Archivo: backend/config/db.js
-const dbConfig = require('./config/db'); // Trae la URL de conexión
+const dbConfig = require(path.join(__dirname, 'config', 'db')); // Trae la URL de conexión
 
 
 async function seed() { // Función async que inserta usuarios de prueba en la BD
@@ -31,7 +31,7 @@ async function seed() { // Función async que inserta usuarios de prueba en la B
       username: 'coord',             // Nombre de usuario del coordinador
       email: 'coord@example.com',    // Email del coordinador
       password: 'coord123',          // Contraseña en texto plano; será encriptada por el pre-save hook
-      role: 'coordinador'            // Rol con acceso a gestión de datos
+      role: 'coord'            // Rol con acceso a gestión de datos
     }
   ];
 

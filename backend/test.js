@@ -89,8 +89,8 @@ async function runTests() { // Función principal que ejecuta todos los tests en
   const newUser = { // Datos del usuario de prueba con timestamp para evitar duplicados
     username: `testuser${timestamp}`, // Username único gracias al timestamp
     email: `test${timestamp}@example.com`, // Email único gracias al timestamp
-    password: 'test123',  // Contraseña del usuario de prueba
-    role: 'auxiliar'      // Rol menos privilegiado
+    password: 'test12345',  // Contraseña del usuario de prueba
+    role: 'aux'      // Rol menos privilegiado
   };
   res = await request('POST', '/users', newUser); // Petición POST /api/users con datos del nuevo usuario
   const userCreated = res.data?.data || res.data; // Extrae el usuario creado de la respuesta
@@ -208,8 +208,8 @@ async function runTests() { // Función principal que ejecuta todos los tests en
     description: 'Producto de prueba',   // Descripción
     price: 99.99,                        // Precio de prueba (positivo, válido)
     stock: 10,                           // Stock de prueba (positivo, válido)
-    category: categoryId || '000000000000000000000001',    // ID de la categoría creada; fallback si no existe
-    subcategory: subcategoryId || '000000000000000000000001' // ID de la subcategoría creada; fallback si no existe
+    category: categoryId || '69af7945df21c0ca61ce019a',    // ID de la categoría creada; fallback si no existe
+    subcategory: subcategoryId || '69af7945df21c0ca61ce01a0' // ID de la subcategoría creada; fallback si no existe
   };
   res = await request('POST', '/products', newProduct); // Petición POST /api/products con token de admin
   const prodCreated = res.data?.data || res.data; // Extrae el producto creado de la respuesta

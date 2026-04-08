@@ -4,7 +4,7 @@
 const { authenticate, authorize } = require("./auth.js");
 const { verifyToken } = require("./authJwt.js");
 const { checkRole } = require("./role.js");
-const { checkDuplicateUsernameOrEmail, checkRolesExisted } = require("./verifySingUp.js");
+const { checkDuplicateUsernameOrEmail, checkRolesExisted } = require("./verifySignUp.js");
 
 module.exports = {
     authenticate,

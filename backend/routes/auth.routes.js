@@ -12,7 +12,7 @@ const express = require("express");
 const router = express.Router();
 
 const authController = require("../controllers/auth.controller.js");
-const verifySignUp = require("../middleware/verifySingUp.js");
+const verifySignUp = require("../middleware/verifySignUp.js");
 const { verifyToken } = require("../middleware/authJwt.js");
 const { checkRole } = require("../middleware/role.js");
 

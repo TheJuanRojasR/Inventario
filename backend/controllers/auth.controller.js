@@ -13,7 +13,7 @@ exports.signup = async (req, res) => {
             username: req.body.username,
             email: req.body.email,
             password: req.body.password,
-            role: req.body.role || "auxiliar",
+            role: req.body.role || "aux",
         });
 
         // 2. Guarda el usuario. Se ejectua el middelware y hashea la contraseña.
@@ -61,8 +61,8 @@ exports.signup = async (req, res) => {
 };
 
 /** 
- * SINGIN : INICIAR SESION
- * POST /api/auth/singin
+z * SIGNIN : INICIAR SESION
+ * POST /api/auth/signin
  * body { email o usuario, password }
  * Busca el usuario por email o username
  * Valida la contraseña con bcrypt
@@ -110,7 +110,7 @@ exports.signin = async (req, res) => {
         const isPasswordValid = await bcrypt.compare(req.body.password, user.password);
 
         if (!isPasswordValid) {
-            return res.status(400).json({
+            return res.status(401).json({
                 success: false,
                 message: "Contraseña incorrecta",
             })

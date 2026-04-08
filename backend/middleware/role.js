@@ -67,11 +67,11 @@ const isAdmin = (req, res, next) => {
 }
 
 const isCoordinador = (req, res, next) => {
-    return checkRole("coordinador")(req, res, next);
+    return checkRole("coord")(req, res, next);
 }
 
 const isAuxiliar = (req, res, next) => {
-    return checkRole("auxiliar")(req, res, next);
+    return checkRole("aux")(req, res, next);
 }
 
 // Modulos a exportar

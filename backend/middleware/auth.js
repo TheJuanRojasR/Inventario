@@ -4,10 +4,13 @@
  * MIDDLEWARE: Authentication JWT
  * 
  * Verifica que el usuario tenga un token valido y carga los datos del usuario en la req.user
+ * 
+ * [DEPRECATED] - Este middleware no se está utilizando actualmente.
+ * Por favor utilizar 'authJwt.js' que es el implementado en las rutas.
  */
 
 const jwt = require("jsonwebtoken");
-const { User } = require("../models/index.js");
+const { User } = require("../models");
 
 /**
  * Autenticar Usuario

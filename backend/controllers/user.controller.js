@@ -42,7 +42,7 @@ exports.getAllUsers = async (req, res) => {
 
         let users;
         // control de acceso basado en rol
-        if (req.userRole === "auxiliar") {
+        if (req.userRole === "aux") {
             // Los auxiliares solo pueden verse a si mismo
             users = await User.find({ _id: req.userId, ...activeFilter }).select("-password");
         } else {
@@ -87,7 +87,7 @@ exports.getUserById = async (req, res) => {
 
         // validaciones de acceso
         // Los auxiliares solo pueden ver su propio perfil
-        if (req.userRole === "auxiliar" && req.userId !== user.id.toString()) {
+        if (req.userRole === "aux" && req.userId !== user.id.toString()) {
             return res.status(403).json({
                 success: false,
                 message: "No tiene permiso para ver este usuario",
@@ -95,7 +95,7 @@ exports.getUserById = async (req, res) => {
         }
 
         // Los coordinadores no pueden ver administradores
-        if (req.userRole === "coordinador" && user.role === "admin") {
+        if (req.userRole === "coord" && user.role === "admin") {
             return res.status(403).json({
                 success: false,
                 message: "No puede ver administradores",
@@ -181,7 +181,7 @@ exports.createUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
     try {
         // Restrinccion : auxiliar solo puede actualizar su propio perfil
-        if (req.userRole === "auxiliar" && req.userId.toString() !== req.params.id) {
+        if (req.userRole === "aux" && req.userId.toString() !== req.params.id) {
             return res.status(403).json({
                 success: false,
                 message: "No tiene permiso para actualizar este usuario.",
@@ -189,17 +189,21 @@ exports.updateUser = async (req, res) => {
         }
 
         // Restrinccion : auxiliar no puede cambiar su rol
-        if (req.userRole === "auxiliar" && req.body.role) {
+        if (req.userRole === "aux" && req.body.role) {
             return res.status(403).json({
                 success: false,
                 message: "No tiene permiso para modificar su rol.",
             });
         }
 
+        // Por defecto mongoose no ejecuta validaciones en los update, por eso toca activarlos
         const updatedUser = await User.findByIdAndUpdate(
             req.params.id,
             { $set: req.body },
-            { new: true } // Retorna documento actualizado
+            // new : true : Devuelve el documento despues de ser actualizado
+            // runValidators : true : Ejecuta las validaciones puestas en el esquema
+            // context : "query" : Le dice a mongoose que el contexto de validacion es una Query y no un documento
+            { new: true, runValidators: true, context: "query" }
         ).select("-password"); // No retorna contrasena 
 
         if (!updatedUser) {
@@ -272,9 +276,11 @@ exports.deleteUser = async (req, res) => {
             res.status(200).json({
                 success: true,
                 message: "Usuario eliminado exitosamente.",
+                data: userToDelete,
             });
         } else {
             userToDelete.active = false;
+            
             await userToDelete.save();
 
             res.status(200).json({

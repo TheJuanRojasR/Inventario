@@ -17,7 +17,7 @@ module.exports = {
 
     // Configuracion de DB
     DB : {
-        URL : process.env.MONGODB_URI || "mongodb://localhost:27017/",
+        URL : process.env.MONGODB_URI || "mongodb://localhost:27017/inventario",
         OPTIONS : {
             useNewUrlParser: true,
             useUnifiedTopology: true,
@@ -27,7 +27,7 @@ module.exports = {
     // Roles del sistema
     ROLES : {
         ADMIN : "admin",
-        COORDINADOR : "coordinador",
-        AUXILIAR : "auxiliar"
+        COORDINADOR : "coord",
+        AUXILIAR : "aux"
     },
 };

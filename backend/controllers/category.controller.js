@@ -1,6 +1,6 @@
 "use strict";
 
-const Category = require("../models/category.model.js");
+const { Category } = require("../models");
 
 /**
  * crate: crear una categoria
@@ -91,6 +91,8 @@ exports.createCategory = async (req, res) => {
 exports.getCategories = async (req, res) => {
     try {
         const includeInactive = req.query.includeInactive === "true";
+
+        console.log(req.query.includeInactive);
     
         const activeFilter = includeInactive ? {} : { active: { $ne: false } };
     
@@ -226,8 +228,7 @@ exports.updateCategory = async (req, res) => {
 
 exports.deleteCategory = async (req, res) => {
     try {
-        const Subcategory = require("../models/subcategory.model.js");
-        const Product = require("../models/product.model.js");
+        const { Subcategory, Product } = require("../models");
         const isHardDelete = req.query.hardDelete === "true";
 
         const category = await Category.findById(req.params.id);
@@ -240,7 +241,11 @@ exports.deleteCategory = async (req, res) => {
         }
 
         if (isHardDelete) {
-            const subIds = await Subcategory.find({ category: req.params.id }).map(s => s._id);
+            // lean() : Metodo que vuelve los documentos de Mongo en objetos JS. Mejorando la velocidad y reducinedo la memoria gastada. Como es un objeto js no tiene los metodos normales de mongoose (.save(), .populate(), etc). Es bueno cuando solo se necesita leer datos.
+            let subIds = await Subcategory.find({ category: req.params.id }).lean();
+
+            // Arreglo momentanio
+            subIds = subIds.map(s => s._id)
 
             await Product.deleteMany({ category: req.params.id });
 
